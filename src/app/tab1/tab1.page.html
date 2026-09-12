@@ -1,17 +1,664 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Tab 1
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<div class="container">
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <!-- HEADER -->
 
-  <app-explore-container name="Tab 1 page"></app-explore-container>
-</ion-content>
+  <div class="row">
+    <div class="col s12">
+      <h4>Usuarios</h4>
+      <h4>Pulsa el boton de id para ver los registros</h4>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+
+  <div class="row">
+
+
+<div class="input-field col s10 nopad">
+  <input
+    type="text"
+    [value]="search"
+    (input)="search = $any($event.target).value; currentPage = 1"
+    class="form-control"
+    placeholder="Buscar usuarios..." />
+</div>
+
+
+  </div>
+
+  <!-- EMAIL LIST -->
+
+  <div class="email-list-box">
+
+
+<div class="row">
+  <b *ngFor="let d of emailList; let last = last">
+    {{ d.correo }}{{ last ? '' : ', ' }}
+  </b>
+</div>
+
+
+  </div>
+
+  <!-- EMAIL BUTTON -->
+
+  <div class="row">
+
+
+<a
+  [href]="mailtoAll"
+  class="waves-effect waves-light btn margin-bottom-1em">
+
+  <i class="material-icons left">email</i>
+
+  Email a todos ({{ emailList.length }})
+
+</a>
+
+<details class="email-details">
+
+  <summary class="waves-effect waves-light btn margin-bottom-1em">
+    Ver lista de correos
+    ({{ emailList.length }})
+  </summary>
+
+  <div class="email-list-content">
+
+    <p *ngFor="let d of emailList">
+      <a [href]="'mailto:' + d.correo">
+        {{ d.correo }}
+      </a>
+    </p>
+
+  </div>
+
+</details>
+
+
+  </div>
+
+  <br>
+
+  <!-- RESULTS PER PAGE -->
+
+  <div class="row">
+
+
+<div
+  style="width: 130px;"
+  class="input-field col s2">
+
+  <label for="resultlimit">
+    Resultados por página:
+  </label>
+
+</div>
+
+<div
+  style="min-width: 50px;"
+  class="input-field col s1">
+
+  <select
+    id="resultlimit"
+    [value]="resultlimit"
+    (change)="resultlimit = +$any($event.target).value; changePageLimit()">
+
+    <option value="1">1</option>
+    <option value="3">3</option>
+    <option value="5">5</option>
+    <option value="10">10</option>
+    <option value="20">20</option>
+    <option value="100">100</option>
+
+  </select>
+
+</div>
+
+
+  </div>
+
+  <!-- SORTER -->
+
+  <div class="sorter">
+
+
+<h6 style="display: inline-block;">
+  Ordenar por:
+</h6>
+
+
+<button
+  type="button"
+  class="btn"
+  [class.activetab]="predicate === 'username'"
+  (click)="sortBy('username')">
+
+  Username
+
+  <i
+    *ngIf="predicate === 'username' && !reverse"
+    class="material-icons right">
+    expand_more
+  </i>
+
+  <i
+    *ngIf="predicate === 'username' && reverse"
+    class="material-icons right">
+    expand_less
+  </i>
+
+</button>
+
+
+<button
+  type="button"
+  class="btn"
+  [class.activetab]="predicate === 'nombre'"
+  (click)="sortBy('nombre')">
+
+  Nombre
+
+  <i
+    *ngIf="predicate === 'nombre' && !reverse"
+    class="material-icons right">
+    expand_more
+  </i>
+
+  <i
+    *ngIf="predicate === 'nombre' && reverse"
+    class="material-icons right">
+    expand_less
+  </i>
+
+</button>
+
+
+<button
+  type="button"
+  class="btn"
+  [class.activetab]="predicate === 'correo'"
+  (click)="sortBy('correo')">
+
+  Correo
+
+  <i
+    *ngIf="predicate === 'correo' && !reverse"
+    class="material-icons right">
+    expand_more
+  </i>
+
+  <i
+    *ngIf="predicate === 'correo' && reverse"
+    class="material-icons right">
+    expand_less
+  </i>
+
+</button>
+
+
+<button
+  type="button"
+  class="btn"
+  [class.activetab]="predicate === 'fecha_registro'"
+  (click)="sortBy('fecha_registro')">
+
+  Registrado
+
+  <i
+    *ngIf="predicate === 'fecha_registro' && !reverse"
+    class="material-icons right">
+    expand_more
+  </i>
+
+  <i
+    *ngIf="predicate === 'fecha_registro' && reverse"
+    class="material-icons right">
+    expand_less
+  </i>
+
+</button>
+
+
+  </div>
+
+  <div class="divider">
+    <hr />
+  </div>
+
+  <!-- PAGINATION TOP -->
+
+  <div class="pagination">
+
+
+<button
+  type="button"
+  class="btn"
+  [disabled]="currentPage === 1"
+  (click)="previousPage()">
+
+  Anterior
+
+</button>
+
+
+<span class="page-info">
+  Página {{ currentPage }} de {{ totalPages }}
+</span>
+
+
+<button
+  type="button"
+  class="btn"
+  [disabled]="currentPage === totalPages"
+  (click)="nextPage()">
+
+  Siguiente
+
+</button>
+
+
+  </div>
+
+  <!-- TABLE -->
+
+  <div class="table-container">
+
+
+<table class="table hoverable bordered">
+
+  <thead>
+
+    <tr>
+
+      <!-- ID -->
+      <th
+        [class.activetab]="predicate === 'id'"
+        (click)="sortBy('id')">
+
+        ID
+
+        <i
+          *ngIf="predicate === 'id' && !reverse"
+          class="material-icons right">
+          expand_more
+        </i>
+
+        <i
+          *ngIf="predicate === 'id' && reverse"
+          class="material-icons right">
+          expand_less
+        </i>
+
+      </th>
+
+
+      <!-- USERNAME -->
+      <th
+        [class.activetab]="predicate === 'username'"
+        (click)="sortBy('username')">
+
+        Username
+
+        <i
+          *ngIf="predicate === 'username' && !reverse"
+          class="material-icons right">
+          expand_more
+        </i>
+
+        <i
+          *ngIf="predicate === 'username' && reverse"
+          class="material-icons right">
+          expand_less
+        </i>
+
+      </th>
+
+
+      <!-- NOMBRE -->
+      <th
+        [class.activetab]="predicate === 'nombre'"
+        (click)="sortBy('nombre')">
+
+        Nombre
+
+        <i
+          *ngIf="predicate === 'nombre' && !reverse"
+          class="material-icons right">
+          expand_more
+        </i>
+
+        <i
+          *ngIf="predicate === 'nombre' && reverse"
+          class="material-icons right">
+          expand_less
+        </i>
+
+      </th>
+
+
+      <!-- CORREO -->
+      <th
+        [class.activetab]="predicate === 'correo'"
+        (click)="sortBy('correo')">
+
+        Correo
+
+        <i
+          *ngIf="predicate === 'correo' && !reverse"
+          class="material-icons right">
+          expand_more
+        </i>
+
+        <i
+          *ngIf="predicate === 'correo' && reverse"
+          class="material-icons right">
+          expand_less
+        </i>
+
+      </th>
+
+
+      <!-- FECHA REGISTRO -->
+      <th
+        [class.activetab]="predicate === 'fecha_registro'"
+        (click)="sortBy('fecha_registro')">
+
+        Registrado
+
+        <i
+          *ngIf="predicate === 'fecha_registro' && !reverse"
+          class="material-icons right">
+          expand_more
+        </i>
+
+        <i
+          *ngIf="predicate === 'fecha_registro' && reverse"
+          class="material-icons right">
+          expand_less
+        </i>
+
+      </th>
+
+
+      <!-- ACCIÓN -->
+      <th class="text-align-center">
+        Acción
+      </th>
+
+    </tr>
+
+  </thead>
+
+
+  <tbody>
+
+    <tr *ngFor="let d of pagedUsuarios">
+
+      <td>
+        {{ d.id }}
+      </td>
+
+      <td>
+        {{ d.username }}
+      </td>
+
+      <td>
+        {{ d.nombre }}
+      </td>
+
+      <td class="breakEmail">
+
+        <a [href]="'mailto:' + d.correo">
+          {{ d.correo }}
+        </a>
+
+      </td>
+
+      <td>
+        {{ formatFecha(d.fecha_registro) }}
+      </td>
+
+      <td>
+
+        <!-- EDITAR -->
+        <button
+          type="button"
+          (click)="readOne(d.id)"
+          class="waves-effect waves-light btn customAction">
+
+          <i class="material-icons left">
+            edit
+          </i>
+
+          Editar
+
+        </button>
+
+
+        <!-- ELIMINAR -->
+        <button
+          type="button"
+          (click)="deleteUsuario(d.id)"
+          class="waves-effect waves-light btn customAction">
+
+          <i class="material-icons left">
+            delete
+          </i>
+
+          Eliminar
+
+        </button>
+
+      </td>
+
+    </tr>
+
+
+    <!-- NO RESULTS -->
+    <tr *ngIf="pagedUsuarios.length === 0">
+
+      <td
+        colspan="6"
+        class="text-align-center">
+
+        No se encontraron usuarios.
+
+      </td>
+
+    </tr>
+
+  </tbody>
+
+</table>
+
+
+  </div>
+
+  <!-- PAGINATION BOTTOM -->
+
+  <div class="pagination">
+
+
+<button
+  type="button"
+  class="btn"
+  [disabled]="currentPage === 1"
+  (click)="previousPage()">
+
+  Anterior
+
+</button>
+
+
+<span class="page-info">
+  Página {{ currentPage }} de {{ totalPages }}
+</span>
+
+
+<button
+  type="button"
+  class="btn"
+  [disabled]="currentPage === totalPages"
+  (click)="nextPage()">
+
+  Siguiente
+
+</button>
+
+
+  </div>
+
+  <!-- CREATE / EDIT MODAL -->
+
+  <div
+    *ngIf="showModal"
+    class="modal-overlay"
+    (click)="closeModal()">
+
+
+<div
+  class="modal-box"
+  (click)="$event.stopPropagation()">
+
+  <div class="modal-content">
+
+    <h4>
+      {{ editing ? 'Editar usuario' : 'Crear nuevo usuario' }}
+    </h4>
+
+
+    <!-- USERNAME -->
+    <div class="input-field">
+
+      <input
+        id="form-username"
+        name="username"
+        type="text"
+        [(ngModel)]="username"
+        required
+        placeholder="Username" />
+
+    </div>
+
+
+    <!-- NOMBRE -->
+    <div class="input-field">
+
+      <input
+        id="form-nombre"
+        name="nombre"
+        type="text"
+        [(ngModel)]="nombre"
+        required
+        placeholder="Nombre completo" />
+
+    </div>
+
+
+    <!-- CORREO -->
+    <div class="input-field">
+
+      <input
+        id="form-correo"
+        name="correo"
+        type="email"
+        [(ngModel)]="correo"
+        required
+        placeholder="Correo" />
+
+    </div>
+
+
+    <!-- PASSWORD -->
+    <div class="input-field">
+
+      <input
+        id="form-password"
+        name="password"
+        type="password"
+        [(ngModel)]="password"
+        [placeholder]="editing ? 'Dejar en blanco para no cambiarla' : 'Password'" />
+
+    </div>
+
+
+    <!-- BUTTONS -->
+    <div class="modal-buttons">
+
+      <!-- CREATE -->
+      <button
+        *ngIf="!editing"
+        type="button"
+        class="waves-effect waves-light btn customAction"
+        (click)="createUsuario()">
+
+        <i class="material-icons left">
+          add
+        </i>
+
+        Crear
+
+      </button>
+
+
+      <!-- UPDATE -->
+      <button
+        *ngIf="editing"
+        type="button"
+        class="waves-effect waves-light btn customAction"
+        (click)="updateUsuario()">
+
+        <i class="material-icons left">
+          edit
+        </i>
+
+        Guardar cambios
+
+      </button>
+
+
+      <!-- CLOSE -->
+      <button
+        type="button"
+        class="waves-effect waves-light btn customAction"
+        (click)="closeModal()">
+
+        <i class="material-icons left">
+          close
+        </i>
+
+        Cerrar
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+  </div>
+
+  <!-- FLOATING ADD BUTTON -->
+
+  <div
+    class="fixed-action-btn"
+    style="bottom:45px; right:24px;">
+
+
+<button
+  type="button"
+  class="waves-effect waves-light btn-floating btn-large red"
+  (click)="showCreateForm()">
+
+  <i class="large material-icons">
+    add
+  </i>
+
+</button>
+
+
+  </div>
+
+</div>

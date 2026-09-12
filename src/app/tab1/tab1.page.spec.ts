@@ -1,25 +1,47 @@
-import { provideZonelessChangeDetection } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideIonicAngular } from '@ionic/angular';
+import { Component } from '@angular/core';
 
-import { Tab1Page } from './tab1.page';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonFab,
+  IonFabButton,
+  IonIcon
+} from '@ionic/angular';
 
-describe('Tab1Page', () => {
-  let component: Tab1Page;
-  let fixture: ComponentFixture<Tab1Page>;
+import { PhotoService, UserPhoto } from '../services/photo.service';
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [Tab1Page],
-      providers: [provideZonelessChangeDetection(), provideIonicAngular()],
-    }).compileComponents();
+@Component({
+  selector: 'app-tab1',
+  templateUrl: 'tab1.page.html',
+  styleUrls: ['tab1.page.scss'],
+  imports: [
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonFab,
+    IonFabButton,
+    IonIcon
+  ]
+})
+export class Tab1Page {
 
-    fixture = TestBed.createComponent(Tab1Page);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+  constructor(public photoService: PhotoService) {}
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+  async addPhotoToGallery(): Promise<void> {
+    await this.photoService.addNewToGallery();
+  }
+
+  async showActionSheet(photo: UserPhoto, position: number): Promise<void> {
+    console.log('Foto seleccionada:', photo);
+    console.log('Posición:', position);
+  }
+}

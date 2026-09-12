@@ -1,17 +1,188 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Tab 3
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-header [translucent]="true"> <ion-toolbar> <ion-title>Xbox</ion-title> </ion-toolbar> </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 3</ion-title>
-    </ion-toolbar>
-  </ion-header>
 
-  <app-explore-container name="Tab 3 page"></app-explore-container>
+  <div class="xbox-container">
+
+
+<!-- TÍTULO -->
+<div class="xbox-header">
+
+  <div class="xbox-icon">
+    🎮
+  </div>
+
+  <h1>Xbox</h1>
+
+  <p>
+    Conecta tu cuenta de Xbox para consultar tus logros.
+    Presiona dos veces para ver tus logros
+  </p>
+
+</div>
+
+
+<!-- CUENTA NO CONECTADA -->
+<div class="xbox-card" *ngIf="!xboxConnected">
+
+  <div class="card-icon">
+    🔐
+  </div>
+
+  <h2>Conecta tu cuenta</h2>
+
+  <p>
+    Inicia sesión con tu cuenta Microsoft para conectar
+    tu perfil de Xbox.
+  </p>
+
+  <button
+    class="xbox-button"
+    type="button"
+    (click)="conectarXbox()"
+  >
+    🎮 Conectar con Xbox
+  </button>
+
+</div>
+
+
+<!-- CUENTA CONECTADA -->
+<div class="xbox-card profile-card" *ngIf="xboxConnected">
+
+  <div class="profile-icon">
+    🎮
+  </div>
+
+  <h2>{{ gamertag }}</h2>
+
+  <p class="connected-text">
+    Cuenta Xbox conectada
+  </p>
+
+  <div class="gamerscore">
+
+    <span class="gamerscore-number">
+      {{ gamerscore }}
+    </span>
+
+    <span class="gamerscore-label">
+      Gamerscore
+    </span>
+
+  </div>
+
+
+  <button
+    class="achievements-button"
+    type="button"
+    (click)="verLogros()"
+  >
+    🏆 Ver mis logros
+  </button>
+
+</div>
+
+
+<!-- LOGROS -->
+<div
+  class="achievements-section"
+  *ngIf="achievementsLoaded"
+>
+
+  <div class="achievements-header">
+
+    <h2>🏆 Mis logros</h2>
+
+    <span class="achievement-count">
+      {{ achievements.length }} logros
+    </span>
+
+  </div>
+
+
+  <!-- TARJETAS DE LOGROS -->
+  <div class="achievement-list">
+
+    <div
+      class="achievement-card"
+      *ngFor="let achievement of achievements"
+      [class.locked]="!achievement.unlocked"
+    >
+
+      <div class="achievement-icon">
+
+        <span *ngIf="achievement.unlocked">
+          🏆
+        </span>
+
+        <span *ngIf="!achievement.unlocked">
+          🔒
+        </span>
+
+      </div>
+
+
+      <div class="achievement-info">
+
+        <h3>
+          {{ achievement.name }}
+        </h3>
+
+        <p>
+          {{ achievement.unlocked
+            ? achievement.description
+            : achievement.lockedDescription }}
+        </p>
+
+        <div class="achievement-details">
+
+          <span class="achievement-gamerscore">
+            {{ achievement.gamerscore }}G
+          </span>
+
+          <span
+            class="achievement-status"
+            *ngIf="achievement.unlocked"
+          >
+            Desbloqueado
+          </span>
+
+          <span
+            class="achievement-status locked-status"
+            *ngIf="!achievement.unlocked"
+          >
+            Bloqueado
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- CARGANDO -->
+<div
+  class="loading-message"
+  *ngIf="loadingAchievements"
+>
+
+  <div class="loading-icon">
+    🎮
+  </div>
+
+  <p>
+    Consultando tus logros...
+  </p>
+
+</div>
+
+
+  </div>
+
 </ion-content>

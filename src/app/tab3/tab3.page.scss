@@ -1,0 +1,445 @@
+ion-content {
+--background: #0b0b0b;
+}
+
+ion-toolbar {
+--background: #107c10;
+--color: white;
+}
+
+.xbox-container {
+min-height: 100%;
+padding: 30px 20px;
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+
+/* ==========================================
+HEADER
+========================================== */
+
+.xbox-header {
+width: 100%;
+max-width: 500px;
+text-align: center;
+margin-top: 20px;
+margin-bottom: 30px;
+}
+
+.xbox-icon {
+font-size: 60px;
+margin-bottom: 10px;
+}
+
+.xbox-header h1 {
+margin: 0;
+color: white;
+font-size: 32px;
+font-weight: 700;
+}
+
+.xbox-header p {
+margin-top: 10px;
+color: #bdbdbd;
+font-size: 15px;
+}
+
+/* ==========================================
+TARJETA PRINCIPAL
+========================================== */
+
+.xbox-card {
+width: 100%;
+max-width: 450px;
+padding: 30px 25px;
+box-sizing: border-box;
+
+background: #181818;
+
+border-radius: 15px;
+
+text-align: center;
+
+box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.card-icon,
+.profile-icon {
+font-size: 50px;
+margin-bottom: 15px;
+}
+
+.xbox-card h2 {
+margin: 5px 0 10px;
+
+color: white;
+
+font-size: 24px;
+}
+
+.xbox-card p {
+color: #bdbdbd;
+
+line-height: 1.5;
+
+font-size: 15px;
+}
+
+/* ==========================================
+BOTONES
+========================================== */
+
+.xbox-button,
+.achievements-button {
+width: 100%;
+
+margin-top: 20px;
+
+padding: 14px;
+
+border: none;
+
+border-radius: 8px;
+
+background: #107c10;
+
+color: white;
+
+font-size: 16px;
+
+font-weight: 600;
+
+cursor: pointer;
+
+transition: 0.2s;
+}
+
+.xbox-button:hover,
+.achievements-button:hover {
+background: #159615;
+}
+
+.xbox-button:active,
+.achievements-button:active {
+transform: scale(0.98);
+}
+
+/* ==========================================
+PERFIL
+========================================== */
+
+.profile-card {
+padding-top: 35px;
+}
+
+.connected-text {
+color: #107c10 !important;
+font-weight: 600;
+}
+
+/* ==========================================
+GAMERSCORE
+========================================== */
+
+.gamerscore {
+margin-top: 25px;
+
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+
+.gamerscore-number {
+color: white;
+
+font-size: 35px;
+
+font-weight: 700;
+}
+
+.gamerscore-label {
+margin-top: 5px;
+
+color: #999;
+
+font-size: 14px;
+}
+
+/* ==========================================
+SECCIÓN DE LOGROS
+========================================== */
+
+.achievements-section {
+width: 100%;
+max-width: 500px;
+
+margin-top: 30px;
+margin-bottom: 30px;
+}
+
+/* ==========================================
+ENCABEZADO DE LOGROS
+========================================== */
+
+.achievements-header {
+display: flex;
+
+align-items: center;
+
+justify-content: space-between;
+
+margin-bottom: 15px;
+}
+
+.achievements-header h2 {
+margin: 0;
+
+color: white;
+
+font-size: 24px;
+}
+
+.achievement-count {
+background: #107c10;
+
+color: white;
+
+padding: 6px 12px;
+
+border-radius: 20px;
+
+font-size: 13px;
+
+font-weight: 600;
+}
+
+/* ==========================================
+LISTA DE LOGROS
+========================================== */
+
+.achievement-list {
+display: flex;
+
+flex-direction: column;
+
+gap: 12px;
+}
+
+/* ==========================================
+TARJETA DE LOGRO
+========================================== */
+
+.achievement-card {
+display: flex;
+
+align-items: flex-start;
+
+gap: 15px;
+
+width: 100%;
+
+box-sizing: border-box;
+
+padding: 18px;
+
+background: #181818;
+
+border-radius: 12px;
+
+border-left: 4px solid #107c10;
+
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+
+transition: 0.2s;
+}
+
+.achievement-card:hover {
+transform: translateY(-2px);
+}
+
+/* ==========================================
+ICONO DEL LOGRO
+========================================== */
+
+.achievement-icon {
+min-width: 45px;
+
+width: 45px;
+
+height: 45px;
+
+display: flex;
+
+align-items: center;
+
+justify-content: center;
+
+background: #222;
+
+border-radius: 50%;
+
+font-size: 23px;
+}
+
+/* ==========================================
+INFORMACIÓN
+========================================== */
+
+.achievement-info {
+flex: 1;
+
+min-width: 0;
+}
+
+.achievement-info h3 {
+margin: 0 0 7px;
+
+color: white;
+
+font-size: 17px;
+
+font-weight: 600;
+}
+
+.achievement-info p {
+margin: 0;
+
+color: #bdbdbd;
+
+font-size: 14px;
+
+line-height: 1.4;
+}
+
+/* ==========================================
+DETALLES
+========================================== */
+
+.achievement-details {
+display: flex;
+
+align-items: center;
+
+gap: 10px;
+
+margin-top: 12px;
+}
+
+.achievement-gamerscore {
+color: #107c10;
+
+font-size: 14px;
+
+font-weight: 700;
+}
+
+.achievement-status {
+color: #999;
+
+font-size: 12px;
+}
+
+/* ==========================================
+LOGRO BLOQUEADO
+========================================== */
+
+.achievement-card.locked {
+border-left-color: #555;
+
+opacity: 0.65;
+}
+
+.achievement-card.locked .achievement-gamerscore {
+color: #888;
+}
+
+.locked-status {
+color: #777;
+}
+
+/* ==========================================
+CARGANDO
+========================================== */
+
+.loading-message {
+width: 100%;
+
+max-width: 450px;
+
+margin-top: 30px;
+
+padding: 25px;
+
+box-sizing: border-box;
+
+background: #181818;
+
+border-radius: 12px;
+
+text-align: center;
+}
+
+.loading-icon {
+font-size: 40px;
+}
+
+.loading-message p {
+margin: 10px 0 0;
+
+color: #bdbdbd;
+
+font-size: 15px;
+}
+
+/* ==========================================
+CELULAR
+========================================== */
+
+@media (max-width: 500px) {
+
+.xbox-container {
+padding: 25px 15px;
+}
+
+.xbox-header {
+margin-top: 10px;
+}
+
+.xbox-header h1 {
+font-size: 28px;
+}
+
+.xbox-card {
+padding: 25px 20px;
+}
+
+.achievements-section {
+margin-top: 25px;
+}
+
+.achievements-header h2 {
+font-size: 21px;
+}
+
+.achievement-card {
+padding: 15px;
+gap: 12px;
+}
+
+.achievement-icon {
+min-width: 40px;
+width: 40px;
+height: 40px;
+font-size: 20px;
+}
+
+.achievement-info h3 {
+font-size: 16px;
+}
+
+.achievement-info p {
+font-size: 13px;
+}
+
+}

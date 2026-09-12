@@ -1,0 +1,501 @@
+.width-30-pct {
+width: 30%;
+}
+
+.text-align-center {
+text-align: center;
+}
+
+.margin-bottom-1em {
+margin-bottom: 1em;
+}
+
+.breakEmail,
+.breakEmail a {
+overflow-wrap: break-word;
+word-wrap: break-word;
+
+-ms-word-break: break-all;
+
+word-break: break-all;
+
+word-break: break-word;
+
+-ms-hyphens: auto;
+-moz-hyphens: auto;
+-webkit-hyphens: auto;
+hyphens: auto;
+}
+
+.activetab {
+background-color: #ee6e73 !important;
+color: #fff !important;
+min-width: 50px;
+}
+
+.activetab i.right {
+margin-left: 0px;
+}
+
+tr th {
+cursor: pointer;
+}
+
+.divider,
+.sorter {
+display: none;
+}
+
+.sorter .btn {
+margin-bottom: 2px;
+font-size: 0.75em;
+padding: 0 2px;
+}
+
+.customAction {
+margin-bottom: 2px;
+}
+
+.ng-invalid.ng-dirty,
+input[type=tel].ng-invalid.ng-dirty:focus:not([readonly]) {
+border-bottom: 1px solid #F44336;
+box-shadow: 0 1px 0 0 #F44336;
+}
+
+/* ==============================
+MODAL CREAR / EDITAR
+============================== */
+
+.modal-overlay {
+position: fixed;
+
+top: 0;
+left: 0;
+
+width: 100%;
+height: 100%;
+
+background: rgba(0, 0, 0, 0.55);
+
+display: flex;
+
+justify-content: center;
+align-items: center;
+
+z-index: 9999;
+
+padding: 20px;
+
+box-sizing: border-box;
+}
+
+.modal-box {
+width: 90%;
+max-width: 500px;
+
+max-height: 90vh;
+
+background: #ffffff;
+
+border-radius: 8px;
+
+box-shadow:
+0 8px 30px rgba(0, 0, 0, 0.35);
+
+overflow-y: auto;
+
+animation: modalEntrada 0.2s ease-out;
+}
+
+.modal-content {
+padding: 25px;
+}
+
+.modal-content h4 {
+margin-top: 0;
+margin-bottom: 25px;
+
+text-align: center;
+
+color: #333;
+}
+
+.modal-content .input-field {
+margin-bottom: 20px;
+}
+
+.modal-content input {
+width: 100%;
+
+box-sizing: border-box;
+}
+
+.modal-content input:focus {
+border-bottom: 1px solid #ee6e73 !important;
+
+box-shadow:
+0 1px 0 0 #ee6e73 !important;
+}
+
+.modal-buttons {
+display: flex;
+
+justify-content: center;
+
+align-items: center;
+
+gap: 10px;
+
+margin-top: 25px;
+
+flex-wrap: wrap;
+}
+
+.modal-buttons .customAction {
+margin-bottom: 5px;
+}
+
+/* ==============================
+ANIMACIÓN DEL MODAL
+============================== */
+
+@keyframes modalEntrada {
+
+from {
+opacity: 0;
+
+
+transform: scale(0.95);
+
+
+}
+
+to {
+opacity: 1;
+
+
+transform: scale(1);
+
+
+}
+
+}
+
+/* ==============================
+MODAL EN PANTALLAS PEQUEÑAS
+============================== */
+
+@media screen and (max-width: 500px) {
+
+.modal-overlay {
+padding: 10px;
+}
+
+.modal-box {
+width: 95%;
+
+
+max-height: 90vh;
+
+
+}
+
+.modal-content {
+padding: 20px;
+}
+
+.modal-buttons {
+flex-direction: column;
+}
+
+.modal-buttons .customAction {
+width: 100%;
+}
+
+td,
+th {
+padding: 7px 2px;
+}
+
+.customAction {
+padding: 0 5px;
+}
+
+.waves-effect {
+font-size: 0.75em;
+}
+
+h4 {
+font-size: 1.5em;
+}
+
+.modal {
+width: 95%;
+}
+
+.row .col.nopad {
+padding: 0;
+}
+
+td {
+padding-left: 115px;
+}
+
+td:before {
+width: 90px;
+margin-left: 0;
+}
+
+}
+
+/* ==============================
+TABLET / PANTALLAS MEDIANAS
+============================== */
+
+@media screen and (max-width: 1300px) {
+
+.container {
+width: 90%;
+}
+
+}
+
+/* ==============================
+TABLA RESPONSIVA
+============================== */
+
+@media
+only screen and (max-width: 760px),
+(min-device-width: 768px) and (max-device-width: 1024px) {
+
+tr {
+margin-bottom: 10px;
+}
+
+.divider {
+display: block;
+
+
+width: 100%;
+
+
+}
+
+.sorter {
+display: inline-block;
+
+
+margin-top: 15px;
+
+
+}
+
+.nopad {
+padding: 0 !important;
+
+
+margin: 0;
+
+
+}
+
+table,
+thead,
+tbody,
+th,
+td,
+tr {
+display: block;
+}
+
+thead tr {
+position: absolute;
+
+
+top: -9999px;
+left: -9999px;
+
+
+}
+
+tr {
+border: 1px solid #ccc;
+}
+
+td {
+border: none;
+
+
+border-bottom: 1px solid #eee;
+
+position: relative;
+
+padding-left: 50%;
+
+
+}
+
+td:before {
+position: absolute;
+
+
+left: 6px;
+
+width: 45%;
+
+padding-right: 10px;
+
+white-space: nowrap;
+
+margin-left: 20px;
+
+
+}
+
+td:nth-of-type(1):before {
+content: "ID";
+}
+
+td:nth-of-type(2):before {
+content: "Name";
+}
+
+td:nth-of-type(3):before {
+content: "Phone";
+}
+
+td:nth-of-type(4):before {
+content: "Email";
+}
+
+td:nth-of-type(5):before {
+content: "Status";
+}
+
+td:nth-of-type(6):before {
+content: "Submitted";
+}
+
+td:nth-of-type(7):before {
+content: "Modify";
+}
+
+}
+
+/* ==============================
+CELULARES PEQUEÑOS
+============================== */
+
+@media screen and (max-width: 400px) {
+
+
+.sorter {
+width: 100%;
+
+
+margin-top: 0;
+
+display: block;
+
+clear: both;
+
+
+}
+
+.container .row {
+margin: 0;
+}
+
+.container {
+width: 100%;
+}
+
+.modal-content {
+padding: 15px;
+}
+
+}
+
+/* ==============================
+TEXTO VISIBLE EN INPUTS DEL MODAL
+============================== */
+
+.modal-content input[type="text"],
+.modal-content input[type="email"],
+.modal-content input[type="password"] {
+color: #333333 !important;
+background-color: #ffffff !important;
+caret-color: #333333 !important;
+}
+
+/* Texto cuando el input tiene el foco */
+.modal-content input[type="text"]:focus,
+.modal-content input[type="email"]:focus,
+.modal-content input[type="password"]:focus {
+color: #333333 !important;
+background-color: #ffffff !important;
+}
+
+/* Placeholder */
+.modal-content input::placeholder {
+color: #777777 !important;
+opacity: 1 !important;
+}
+
+/* Texto de las etiquetas */
+.modal-content label {
+color: #555555 !important;
+}
+
+/* Cuando el campo está activo */
+.modal-content input:focus + label {
+color: #ee6e73 !important;
+}
+
+/* ==============================
+INPUTS DEL MODAL
+============================== */
+
+.modal-content .input-field {
+position: relative;
+}
+
+.modal-content .input-field input {
+color: #333333 !important;
+background-color: #ffffff !important;
+caret-color: #333333 !important;
+}
+
+/* Label inicialmente arriba */
+.modal-content .input-field label {
+color: #555555 !important;
+}
+
+/* Cuando el input tiene el foco, ocultamos el label */
+.modal-content .input-field input:focus + label {
+opacity: 0;
+visibility: hidden;
+}
+
+/* Cuando el input tiene contenido, también ocultamos el label */
+.modal-content .input-field input:not(:placeholder-shown) + label {
+opacity: 0;
+visibility: hidden;
+}
+
+/* Placeholder */
+.modal-content .input-field input::placeholder {
+color: #777777 !important;
+opacity: 1 !important;
+}
+
+/* Mantener el cursor y texto visibles */
+.modal-content .input-field input:focus {
+color: #333333 !important;
+background-color: #ffffff !important;
+
+border-bottom: 1px solid #ee6e73 !important;
+
+box-shadow:
+0 1px 0 0 #ee6e73 !important;
+}

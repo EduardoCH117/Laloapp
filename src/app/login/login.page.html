@@ -1,0 +1,146 @@
+<header class="top-header"></header>
+
+<div id="mainCoantiner">
+
+  <!-- HEADER -->
+  <div class="main-header">
+
+    <div class="header-social">
+      <ul>
+        <li>
+          <a id="nmberone" (click)="numberOne($event)">1</a>
+        </li>
+
+        <li>
+          <a id="nmbertwo" (click)="numberTwo($event)">2</a>
+        </li>
+
+        <li>
+          <a id="numberthree" (click)="numberThree($event)">3</a>
+        </li>
+
+        <li>
+          <a>4</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="folio-btn">
+      <a
+        class="folio-btn-item ajax"
+        href="https://codepen.io/uiswarup/full/WNLdjqN"
+        target="_blank"
+      >
+        <span class="folio-btn-dot"></span>
+        <span class="folio-btn-dot"></span>
+        <span class="folio-btn-dot"></span>
+        <span class="folio-btn-dot"></span>
+        <span class="folio-btn-dot"></span>
+        <span class="folio-btn-dot"></span>
+        <span class="folio-btn-dot"></span>
+        <span class="folio-btn-dot"></span>
+        <span class="folio-btn-dot"></span>
+      </a>
+    </div>
+
+  </div>
+
+
+  <!-- ESTRELLAS -->
+  <div class="stars-container">
+    <div class="starsec"></div>
+    <div class="starthird"></div>
+    <div class="starfourth"></div>
+    <div class="starfifth"></div>
+  </div>
+
+
+  <!-- LOGIN -->
+  <div class="login-container">
+
+    <div class="login-card">
+
+      <div class="login-card-body">
+
+        <h3 class="colorboard">Login</h3>
+
+        <p class="text-muted">
+          Sign In to your account
+        </p>
+
+
+        <!-- USERNAME -->
+        <div class="input-group">
+
+          <input
+            type="text"
+            class="form-control textbox-dg"
+            placeholder="Username"
+            [(ngModel)]="username"
+          >
+
+        </div>
+
+
+        <!-- PASSWORD -->
+        <div class="input-group">
+
+          <input
+            type="password"
+            class="form-control textbox-dg"
+            placeholder="Password"
+            [(ngModel)]="password"
+          >
+
+        </div>
+
+
+        <!-- BOTÓN LOGIN -->
+        <div class="login-actions">
+
+          <button
+            type="button"
+            class="logn-btn"
+            (click)="iniciarSesion()"
+          >
+            Login
+          </button>
+
+          <a
+            (click)="irARegistro()"
+            class="forgot-password"
+          >
+            ¿No tienes cuenta? Regístrate
+          </a>
+
+        </div>
+
+
+        <!-- REDES SOCIALES -->
+        <div class="social-buttons">
+
+          <button class="socila-btn fb-color">
+            <i class="fab fa-facebook-f"></i>
+          </button>
+
+          <button class="socila-btn incolor">
+            <i class="fab fa-linkedin-in"></i>
+          </button>
+
+          <button class="socila-btn tweetcolor">
+            <i class="fab fa-twitter"></i>
+          </button>
+
+          <button class="socila-btn driblecolor">
+            <i class="fab fa-dribbble"></i>
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

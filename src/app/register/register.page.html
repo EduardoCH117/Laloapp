@@ -1,0 +1,143 @@
+<header class="top-header"></header>
+
+<div id="mainCoantiner">
+
+  <!-- HEADER -->
+  <div class="main-header">
+
+    <div class="folio-btn">
+      <a
+        class="folio-btn-item ajax"
+        href="https://codepen.io/uiswarup/full/WNLdjqN"
+        target="_blank"
+      >
+        <span class="folio-btn-dot"></span>
+        <span class="folio-btn-dot"></span>
+        <span class="folio-btn-dot"></span>
+        <span class="folio-btn-dot"></span>
+        <span class="folio-btn-dot"></span>
+        <span class="folio-btn-dot"></span>
+        <span class="folio-btn-dot"></span>
+        <span class="folio-btn-dot"></span>
+        <span class="folio-btn-dot"></span>
+      </a>
+    </div>
+
+  </div>
+
+
+  <!-- ESTRELLAS -->
+  <div class="stars-container">
+    <div class="starsec"></div>
+    <div class="starthird"></div>
+    <div class="starfourth"></div>
+    <div class="starfifth"></div>
+  </div>
+
+
+  <!-- REGISTRO -->
+  <div class="login-container">
+
+    <div class="login-card">
+
+      <div class="login-card-body">
+
+        <h3 class="colorboard">Crear cuenta</h3>
+
+        <p class="text-muted">
+          Regístrate para continuar
+        </p>
+
+
+        <!-- USERNAME -->
+        <div class="input-group">
+
+          <input
+            type="text"
+            class="form-control textbox-dg"
+            placeholder="Username"
+            [(ngModel)]="username"
+          >
+
+        </div>
+
+
+        <!-- NOMBRE -->
+        <div class="input-group">
+
+          <input
+            type="text"
+            class="form-control textbox-dg"
+            placeholder="Nombre completo"
+            [(ngModel)]="nombre"
+          >
+
+        </div>
+
+
+        <!-- CORREO -->
+        <div class="input-group">
+
+          <input
+            type="email"
+            class="form-control textbox-dg"
+            placeholder="Correo"
+            [(ngModel)]="correo"
+          >
+
+        </div>
+
+
+        <!-- PASSWORD -->
+        <div class="input-group">
+
+          <input
+            type="password"
+            class="form-control textbox-dg"
+            placeholder="Password"
+            [(ngModel)]="password"
+          >
+
+        </div>
+
+
+        <!-- CONFIRMAR PASSWORD -->
+        <div class="input-group">
+
+          <input
+            type="password"
+            class="form-control textbox-dg"
+            placeholder="Confirmar password"
+            [(ngModel)]="confirmarPassword"
+          >
+
+        </div>
+
+
+        <!-- BOTÓN REGISTRO -->
+        <div class="login-actions">
+
+          <button
+            type="button"
+            class="logn-btn"
+            (click)="registrarse()"
+          >
+            Registrarme
+          </button>
+
+          <a
+            (click)="irALogin()"
+            class="forgot-password"
+          >
+            ¿Ya tienes cuenta? Inicia sesión
+          </a>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
