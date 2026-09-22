@@ -1,208 +1,244 @@
+
 import { Component } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 
 import {
-IonHeader,
-IonToolbar,
-IonTitle,
-IonContent
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent
 } from '@ionic/angular';
 
 import { HttpClient } from '@angular/common/http';
 
 @Component({
-selector: 'app-tab3',
-templateUrl: 'tab3.page.html',
-styleUrls: ['tab3.page.scss'],
-imports: [
-CommonModule,
-IonHeader,
-IonToolbar,
-IonTitle,
-IonContent
-],
+  selector: 'app-tab3',
+  templateUrl: 'tab3.page.html',
+  styleUrls: ['tab3.page.scss'],
+  imports: [
+    CommonModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent
+  ],
 })
 export class Tab3Page {
 
-xboxConnected: boolean = true;
+  xboxConnected: boolean = false;
 
-gamertag: string = 'Xbox conectado';
+  gamertag: string = 'Xbox no conectado';
 
-gamerscore: number = 0;
+  gamerscore: number = 0;
 
-achievements: any[] = [];
+  achievements: any[] = [];
 
-loadingAchievements: boolean = false;
+  loadingAchievements: boolean = false;
 
-achievementsLoaded: boolean = false;
-
-constructor(
-private http: HttpClient
-) {}
-
-ngOnInit(): void {
+  achievementsLoaded: boolean = false;
 
 
-this.cargarPerfilXbox();
+  constructor(
+    private http: HttpClient
+  ) {}
 
 
-}
+  ngOnInit(): void {
 
-conectarXbox(): void {
-
-
-console.log('Iniciando conexión con Xbox...');
-
-window.location.href =
-  'http://localhost/laloapi/xbox/login.php';
-
-
-}
-
-cargarPerfilXbox(): void {
-
-
-console.log('Consultando perfil de Xbox...');
-
-this.http.get<any>(
-  'http://localhost/laloapi/xbox/profile.php',
-  {
-    withCredentials: true
-  }
-).subscribe({
-
-  next: (datos) => {
-
-    console.log('PERFIL XBOX:');
-    console.log(datos);
-
-    if (datos.success) {
-
-      this.xboxConnected = true;
-
-      this.gamertag =
-        datos.gamertag || 'Xbox conectado';
-
-      this.gamerscore =
-        Number(datos.gamerscore) || 0;
-
-      console.log(
-        'Gamertag:',
-        this.gamertag
-      );
-
-      console.log(
-        'Gamerscore:',
-        this.gamerscore
-      );
-
-    } else {
-
-      console.error(
-        'Error obteniendo perfil:',
-        datos
-      );
-
-    }
-
-  },
-
-  error: (error) => {
-
-    console.error(
-      'Error consultando perfil de Xbox:',
-      error
-    );
+    this.cargarPerfilXbox();
 
   }
 
-});
 
+  // ==========================================
+  // CONECTAR XBOX
+  // ==========================================
 
-}
+  conectarXbox(): void {
 
-verLogros(): void {
+    console.log('Iniciando conexión con Xbox...');
 
+    window.location.href =
+      'http://localhost/laloapi/xbox/login.php';
 
-console.log('Consultando logros de Xbox...');
-
-this.loadingAchievements = true;
-
-this.http.get<any>(
-  'http://localhost/laloapi/xbox/achievements.php',
-  {
-    withCredentials: true
   }
-).subscribe({
 
-  next: (datos) => {
 
-    console.log('JSON RECIBIDO:');
-    console.log(datos);
+  // ==========================================
+  // CARGAR PERFIL XBOX
+  // ==========================================
 
-    this.loadingAchievements = false;
+  cargarPerfilXbox(): void {
 
-    if (datos.success) {
+    console.log('Consultando perfil de Xbox...');
 
-      this.xboxConnected = true;
+    this.http.get<any>(
+      'http://localhost/laloapi/xbox/profile.php',
+      {
+        withCredentials: true
+      }
+    ).subscribe({
 
-      if (
-        datos.achievements &&
-        Array.isArray(
-          datos.achievements.achievements
-        )
-      ) {
+      next: (datos) => {
 
-        this.achievements =
-          datos.achievements.achievements;
+        console.log('PERFIL XBOX:');
+        console.log(datos);
 
-      } else {
 
-        this.achievements = [];
+        if (datos.success) {
+
+          this.xboxConnected = true;
+
+          this.gamertag =
+            datos.gamertag || 'Xbox conectado';
+
+          this.gamerscore =
+            Number(datos.gamerscore) || 0;
+
+
+          console.log(
+            'Gamertag:',
+            this.gamertag
+          );
+
+          console.log(
+            'Gamerscore:',
+            this.gamerscore
+          );
+
+        } else {
+
+          this.xboxConnected = false;
+
+          this.gamertag = 'Xbox no conectado';
+
+          this.gamerscore = 0;
+
+          console.error(
+            'No hay sesión Xbox:',
+            datos
+          );
+
+        }
+
+      },
+
+      error: (error) => {
+
+        this.xboxConnected = false;
+
+        console.error(
+          'Error consultando perfil de Xbox:',
+          error
+        );
 
       }
 
-      this.achievementsLoaded = true;
-
-      console.log(
-        'Logros encontrados:',
-        this.achievements.length
-      );
-
-    } else {
-
-      console.error(
-        'Xbox devolvió un error:',
-        datos
-      );
-
-      alert(
-        datos.message ||
-        'Xbox devolvió un error.'
-      );
-
-    }
-
-  },
-
-  error: (error) => {
-
-    console.error(
-      'Error consultando logros:',
-      error
-    );
-
-    this.loadingAchievements = false;
-
-    alert(
-      'No se pudieron consultar los logros de Xbox.'
-    );
+    });
 
   }
 
-});
 
+  // ==========================================
+  // VER LOGROS
+  // ==========================================
+
+  verLogros(): void {
+
+    console.log('Consultando logros de Xbox...');
+
+    this.loadingAchievements = true;
+
+
+    this.http.get<any>(
+      'http://localhost/laloapi/xbox/achievements.php',
+      {
+        withCredentials: true
+      }
+    ).subscribe({
+
+      next: (datos) => {
+
+        console.log('JSON RECIBIDO:');
+
+        console.log(datos);
+
+
+        this.loadingAchievements = false;
+
+
+        if (datos.success) {
+
+          this.xboxConnected = true;
+
+
+          if (
+            datos.achievements &&
+            Array.isArray(
+              datos.achievements.achievements
+            )
+          ) {
+
+            this.achievements =
+              datos.achievements.achievements;
+
+          } else {
+
+            this.achievements = [];
+
+          }
+
+
+          this.achievementsLoaded = true;
+
+
+          console.log(
+            'Logros encontrados:',
+            this.achievements.length
+          );
+
+
+        } else {
+
+          this.xboxConnected = false;
+
+          console.error(
+            'Xbox devolvió un error:',
+            datos
+          );
+
+
+          alert(
+            datos.message ||
+            'Xbox devolvió un error.'
+          );
+
+        }
+
+      },
+
+
+      error: (error) => {
+
+        console.error(
+          'Error consultando logros:',
+          error
+        );
+
+
+        this.loadingAchievements = false;
+
+
+        alert(
+          'No se pudieron consultar los logros de Xbox.'
+        );
+
+      }
+
+    });
+
+  }
 
 }
 
-}
