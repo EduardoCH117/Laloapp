@@ -22,7 +22,7 @@ export interface UsuarioActualizado {
   username: string;
   nombre: string;
   correo: string;
-  password?: string; // opcional: si no se manda, el backend no cambia la contraseña
+  password?: string;
 }
 
 export interface RespuestaApi {
@@ -39,35 +39,44 @@ export interface RespuestaListarUsuarios extends RespuestaApi {
 })
 export class UsuarioService {
 
-  private apiListar = 'http://localhost/laloapi/usuarios_listar.php';
-  private apiCrear = 'http://localhost/laloapi/usuarios_crear.php';
-  private apiActualizar = 'http://localhost/laloapi/usuarios_actualizar.php';
-  private apiEliminar = 'http://localhost/laloapi/usuarios_eliminar.php';
+  private apiListar =
+    'http://localhost/laloapi/usuarios_listar.php';
+
+  private apiCrear =
+    'http://localhost/laloapi/usuarios_crear.php';
+
+  private apiActualizar =
+    'http://localhost/laloapi/usuarios_actualizar.php';
+
+  private apiEliminar =
+    'http://localhost/laloapi/usuarios_eliminar.php';
 
   constructor(private http: HttpClient) {}
 
   listar(): Observable<RespuestaListarUsuarios> {
-
-    return this.http.get<RespuestaListarUsuarios>(this.apiListar);
-
+    return this.http.get<RespuestaListarUsuarios>(
+      this.apiListar
+    );
   }
 
   crear(usuario: UsuarioNuevo): Observable<RespuestaApi> {
-
-    return this.http.post<RespuestaApi>(this.apiCrear, usuario);
-
+    return this.http.post<RespuestaApi>(
+      this.apiCrear,
+      usuario
+    );
   }
 
   actualizar(usuario: UsuarioActualizado): Observable<RespuestaApi> {
-
-    return this.http.post<RespuestaApi>(this.apiActualizar, usuario);
-
+    return this.http.put<RespuestaApi>(
+      this.apiActualizar,
+      usuario
+    );
   }
 
   eliminar(id: number): Observable<RespuestaApi> {
-
-    return this.http.post<RespuestaApi>(this.apiEliminar, { id });
-
+    return this.http.delete<RespuestaApi>(
+      this.apiEliminar,
+      { body: { id } }
+    );
   }
-
 }

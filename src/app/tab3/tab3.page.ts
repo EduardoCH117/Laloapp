@@ -1,7 +1,9 @@
 import {
   Component,
   ChangeDetectorRef,
-  OnDestroy
+  OnDestroy,
+  ElementRef,
+  ViewChild
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -14,6 +16,7 @@ import {
 } from '@ionic/angular';
 
 import { HttpClient } from '@angular/common/http';
+import * as d3 from 'd3';
 
 @Component({
   selector: 'app-tab3',
@@ -89,6 +92,235 @@ export class Tab3Page implements OnDestroy {
 
   private readonly CACHE_ACHIEVEMENTS =
     'xboxCacheAchievements';
+
+  // ==============================
+  // GALERÍA MULTIMEDIA INTERACTIVA
+  // ==============================
+
+  mostrarGaleria: boolean = false;
+  indicePortada: number = -1;
+
+  get juegoEnVisor(): any | null {
+    return this.indicePortada >= 0 && this.indicePortada < this.games.length
+      ? this.games[this.indicePortada]
+      : null;
+  }
+
+  abrirGaleria(): void {
+    this.mostrarGaleria = true;
+  }
+
+  cerrarGaleria(): void {
+    this.cerrarVisor();
+    this.mostrarGaleria = false;
+  }
+
+  abrirVisor(index: number): void {
+    if (index < 0 || index >= this.games.length) return;
+    this.indicePortada = index;
+  }
+
+  cerrarVisor(): void {
+    this.indicePortada = -1;
+  }
+
+  cambiarPortada(direccion: number): void {
+    if (this.indicePortada < 0 || this.games.length === 0) return;
+    this.indicePortada =
+      (this.indicePortada + direccion + this.games.length) % this.games.length;
+  }
+
+  // ==============================
+  // ESTADÍSTICAS INTERACTIVAS D3
+  // ==============================
+  @ViewChild('graficaMensual') graficaMensual?: ElementRef<HTMLDivElement>;
+  @ViewChild('graficaJuegos') graficaJuegos?: ElementRef<HTMLDivElement>;
+
+  mostrarEstadisticas = false;
+  cargandoEstadisticas = false;
+  errorEstadisticas = '';
+  avisoEstadisticas = '';
+  anioEstadisticas = new Date().getFullYear();
+  aniosDisponibles: number[] = [];
+  logrosConFecha: any[] = [];
+  totalLogrosFechados = 0;
+  totalLogrosAnio = 0;
+  mesMasActivo = 'Sin datos';
+  trimestreEstadisticas = 0; // 0 = todo el año
+  limiteJuegosEstadisticas = 8;
+  metricaJuegosEstadisticas: 'logros' | 'gamerscore' = 'logros';
+  filtroJuegoEstadisticas = '';
+  get juegosFiltrablesEstadisticas(): any[] {
+    return this.games.filter((j: any) => j?.name);
+  }
+  cambiarFiltroEstadisticas(event: Event, filtro: 'trimestre' | 'limite' | 'metrica' | 'juego'): void {
+    const valor = (event.target as HTMLSelectElement).value;
+    if (filtro === 'trimestre') this.trimestreEstadisticas = Number(valor);
+    else if (filtro === 'limite') this.limiteJuegosEstadisticas = Number(valor);
+    else if (filtro === 'metrica') this.metricaJuegosEstadisticas = valor === 'gamerscore' ? 'gamerscore' : 'logros';
+    else this.filtroJuegoEstadisticas = valor;
+    this.programarGraficas();
+  }
+  restablecerFiltrosEstadisticas(): void {
+    this.anioEstadisticas = this.aniosDisponibles[0] ?? new Date().getFullYear();
+    this.trimestreEstadisticas = 0;
+    this.limiteJuegosEstadisticas = 8;
+    this.metricaJuegosEstadisticas = 'logros';
+    this.filtroJuegoEstadisticas = '';
+    this.programarGraficas();
+  }
+  private estadisticasRenderPendiente = false;
+
+  alternarEstadisticas(): void {
+    this.mostrarEstadisticas = !this.mostrarEstadisticas;
+    if (this.mostrarEstadisticas) {
+      if (this.mostrarGaleria) this.cerrarGaleria();
+      if (!this.logrosConFecha.length && !this.errorEstadisticas) {
+        this.cargarEstadisticas();
+      } else {
+        this.programarGraficas();
+      }
+    }
+  }
+
+  seleccionarAnioEstadisticas(event: Event): void {
+    const valor = Number((event.target as HTMLSelectElement).value);
+    if (!Number.isFinite(valor)) return;
+    this.anioEstadisticas = valor;
+    this.programarGraficas();
+  }
+
+  cargarEstadisticas(): void {
+    if (!this.isOnline) {
+      this.errorEstadisticas = 'Para obtener las fechas de logros necesitas conexión a Xbox.';
+      this.programarGraficas();
+      return;
+    }
+    this.cargandoEstadisticas = true;
+    this.errorEstadisticas = '';
+    this.avisoEstadisticas = '';
+    this.http.get<any>('http://localhost/laloapi/xbox/achievements.php', {
+      withCredentials: true
+    }).subscribe({
+      next: (respuesta) => {
+        this.cargandoEstadisticas = false;
+        if (!respuesta?.success) {
+          this.errorEstadisticas = respuesta?.message || 'No se pudieron consultar los logros.';
+          this.programarGraficas();
+          return;
+        }
+        // achievements.php conserva la respuesta original de Xbox dentro de achievements.
+        const datos = respuesta.achievements;
+        const lista = Array.isArray(datos) ? datos :
+          Array.isArray(datos?.achievements) ? datos.achievements : [];
+        const deduplicados = new Set<string>();
+        this.logrosConFecha = lista.filter((logro: any) => {
+          if (logro?.progressState !== 'Achieved') return false;
+          const fecha = logro?.progression?.timeUnlocked || logro?.timeUnlocked;
+          if (!fecha || Number.isNaN(new Date(fecha).getTime())) return false;
+          const id = [logro?.serviceConfigId || '', logro?.titleId || '', logro?.id || logro?.name || '', fecha].join('|');
+          if (deduplicados.has(id)) return false;
+          deduplicados.add(id);
+          return true;
+        });
+        this.totalLogrosFechados = this.logrosConFecha.length;
+        const anios = [...new Set(this.logrosConFecha.map((a: any) =>
+          new Date(a.progression?.timeUnlocked || a.timeUnlocked).getFullYear()
+        ))].sort((a,b) => b-a);
+        this.aniosDisponibles = anios;
+        if (anios.length && !anios.includes(this.anioEstadisticas)) this.anioEstadisticas = anios[0];
+        if (lista.length >= 100 || datos?.pagingInfo?.continuationToken || datos?.continuationToken) {
+          this.avisoEstadisticas = 'La API consulta hasta 100 logros. Esta gráfica puede representar solamente una parte del historial.';
+        } else if (lista.length && !this.logrosConFecha.length) {
+          this.avisoEstadisticas = 'Los logros recibidos no incluyen fechas de desbloqueo válidas.';
+        }
+        this.cdr.detectChanges();
+        this.programarGraficas();
+      },
+      error: () => {
+        this.cargandoEstadisticas = false;
+        this.errorEstadisticas = 'No se pudieron cargar las estadísticas. Revisa tu sesión Xbox y la conexión con PHP.';
+        this.programarGraficas();
+      }
+    });
+  }
+
+  private programarGraficas(): void {
+    // Esperar a que Angular cree los contenedores *ngIf.
+    this.cdr.detectChanges();
+    setTimeout(() => this.dibujarGraficas(), 0);
+  }
+
+  private dibujarGraficas(): void {
+    if (!this.mostrarEstadisticas) return;
+    const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    const cantidades = meses.map((mes, numero) => ({ mes, total: this.logrosConFecha.filter((a: any) => {
+      const fecha = new Date(a.progression?.timeUnlocked || a.timeUnlocked);
+      return fecha.getFullYear() === this.anioEstadisticas && fecha.getMonth() === numero && (this.trimestreEstadisticas === 0 || Math.floor(numero / 3) + 1 === this.trimestreEstadisticas);
+    }).length }));
+    this.totalLogrosAnio = d3.sum(cantidades, d => d.total);
+    const mayor = d3.max(cantidades, d => d.total) || 0;
+    this.mesMasActivo = mayor ? cantidades.find(d => d.total === mayor)!.mes : 'Sin datos';
+    if (this.graficaMensual) {
+      this.dibujarBarras(this.graficaMensual.nativeElement, cantidades.map(d => ({ etiqueta: d.mes, valor: d.total })), 'Logros');
+    }
+    if (this.graficaJuegos) {
+      const mejores = this.games
+        .filter((g: any) => !this.filtroJuegoEstadisticas || String(g.titleId ?? g.name) === this.filtroJuegoEstadisticas)
+        .map((g: any) => ({
+          etiqueta: String(g.name || 'Juego'),
+          valor: Number(this.metricaJuegosEstadisticas === 'gamerscore'
+            ? g.currentGamerscore ?? 0 : g.earnedAchievements ?? 0)
+        }))
+        .filter(x => Number.isFinite(x.valor) && x.valor > 0)
+        .sort((a,b) => b.valor - a.valor)
+        .slice(0, this.limiteJuegosEstadisticas);
+      this.dibujarBarras(this.graficaJuegos.nativeElement, mejores,
+        this.metricaJuegosEstadisticas === 'gamerscore' ? 'Gamerscore por juego' : 'Logros por juego');
+    }
+    this.cdr.detectChanges();
+  }
+
+  private dibujarBarras(
+    host: HTMLDivElement,
+    datos: {etiqueta: string; valor: number}[],
+    titulo: string
+  ): void {
+    d3.select(host).selectAll('*').remove();
+    if (!datos.length || !datos.some(d => d.valor > 0)) {
+      d3.select(host).append('p').attr('class','xbox-stats-empty')
+        .text('No hay datos disponibles para esta gráfica.');
+      return;
+    }
+    const ancho = Math.max(320, host.clientWidth || 360);
+    const alto = 280;
+    const margen = { top: 22, right: 15, bottom: 80, left: 38 };
+    const svg = d3.select(host).append('svg')
+      .attr('viewBox', `0 0 ${ancho} ${alto}`)
+      .attr('role','img').attr('aria-label', titulo)
+      .style('width','100%').style('height','auto');
+    const x = d3.scaleBand<string>()
+      .domain(datos.map(d => d.etiqueta)).range([margen.left, ancho-margen.right]).padding(0.25);
+    const y = d3.scaleLinear()
+      .domain([0, d3.max(datos, d => d.valor) || 1]).nice()
+      .range([alto-margen.bottom, margen.top]);
+    svg.append('g').attr('transform',`translate(0,${alto-margen.bottom})`)
+      .call(d3.axisBottom(x).tickSizeOuter(0))
+      .selectAll('text').attr('fill','#eee').attr('font-size','11px')
+      .attr('transform', datos.length > 8 ? 'rotate(-30)' : 'rotate(-20)')
+      .style('text-anchor','end');
+    svg.append('g').attr('transform',`translate(${margen.left},0)`)
+      .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('d')))
+      .selectAll('text').attr('fill','#eee');
+    svg.selectAll('.barra').data(datos).enter().append('rect')
+      .attr('class','barra').attr('x',d => x(d.etiqueta) || 0)
+      .attr('width',x.bandwidth()).attr('y',y(0)).attr('height',0)
+      .attr('rx',4).attr('fill','#37b24d')
+      .append('title').text(d => `${d.etiqueta}: ${d.valor} ${titulo.toLowerCase().includes('gamerscore') ? 'GS' : 'logros'}`);
+    svg.selectAll<SVGRectElement, {etiqueta:string;valor:number}>('.barra')
+      .transition().duration(550).attr('y',d => y(d.valor))
+      .attr('height',d => Math.max(0,y(0)-y(d.valor)));
+  }
 
   constructor(
     private http: HttpClient,

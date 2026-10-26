@@ -5,10 +5,9 @@
   </ion-toolbar>
 </ion-header>
 
-
 <ion-content>
 
-    <!-- ================================= -->
+  <!-- ================================= -->
   <!-- ESTADO DE CONEXIÓN -->
   <!-- ================================= -->
 
@@ -29,7 +28,6 @@
     Se están mostrando los últimos datos guardados.
   </div>
 
-
   <div
     *ngIf="isOnline && showConnectionMessage"
     style="
@@ -44,7 +42,6 @@
   >
     🌐 {{ connectionMessage }}
   </div>
-
 
   <!-- ================================= -->
   <!-- MENSAJE DE ERROR -->
@@ -101,7 +98,6 @@
 
   </div>
 
-
   <!-- ================================= -->
   <!-- XBOX CONECTADO -->
   <!-- ================================= -->
@@ -127,14 +123,9 @@
       "
     >
 
-      <h2
-        style="
-          margin-top: 0;
-        "
-      >
+      <h2 style="margin-top: 0;">
         {{ gamertag }}
       </h2>
-
 
       <p>
         Gamerscore:
@@ -142,7 +133,6 @@
           {{ gamerscore }}
         </strong>
       </p>
-
 
       <p
         style="
@@ -154,7 +144,6 @@
       </p>
 
     </div>
-
 
     <!-- ================================= -->
     <!-- CARGANDO JUEGOS -->
@@ -183,6 +172,264 @@
 
     </div>
 
+    <!-- ================================= -->
+    <!-- GALERÍA MULTIMEDIA INTERACTIVA -->
+    <!-- ================================= -->
+
+    <section
+      *ngIf="!selectedGame"
+      class="xbox-gallery-section"
+      aria-label="Galería multimedia de videojuegos"
+    >
+
+      <div class="xbox-gallery-header">
+
+        <h2>Galería de Xbox</h2>
+
+        <button
+          type="button"
+          class="xbox-gallery-toggle"
+          (click)="mostrarGaleria ? cerrarGaleria() : abrirGaleria()"
+          [attr.aria-expanded]="mostrarGaleria"
+        >
+          {{ mostrarGaleria ? 'Ocultar galería' : 'Ver galería' }}
+        </button>
+
+        <button
+          type="button"
+          class="xbox-gallery-toggle"
+          (click)="alternarEstadisticas()"
+          [attr.aria-expanded]="mostrarEstadisticas"
+        >
+          {{ mostrarEstadisticas ? 'Ocultar estadísticas' : 'Estadísticas' }}
+        </button>
+
+      </div>
+
+      <p class="xbox-gallery-hint">
+        Explora las portadas de tus juegos.
+      </p>
+
+      <!-- JUEGOS NO CARGADOS -->
+
+      <p
+        *ngIf="mostrarGaleria && !gamesLoaded"
+        class="xbox-gallery-hint"
+      >
+        Carga tus juegos de Xbox para ver las portadas.
+      </p>
+
+      <!-- NO HAY JUEGOS -->
+
+      <p
+        *ngIf="mostrarGaleria && gamesLoaded && games.length === 0"
+        class="xbox-gallery-hint"
+      >
+        No hay juegos disponibles para mostrar.
+      </p>
+
+      <!-- CUADRÍCULA DE PORTADAS -->
+
+      <div
+        *ngIf="mostrarGaleria && gamesLoaded && games.length > 0"
+        class="xbox-gallery-grid"
+      >
+
+        <button
+          *ngFor="let game of games; let i = index"
+          type="button"
+          class="xbox-gallery-card"
+          (click)="abrirVisor(i)"
+          [attr.aria-label]="'Ampliar portada de ' + game.name"
+        >
+
+          <div class="xbox-gallery-cover">
+
+            <img
+              *ngIf="game.image"
+              [src]="game.image"
+              [alt]="'Portada de ' + game.name"
+              loading="lazy"
+            />
+
+            <span
+              *ngIf="!game.image"
+              class="xbox-gallery-placeholder"
+              aria-hidden="true"
+            >
+              🎮
+            </span>
+
+          </div>
+
+          <span class="xbox-gallery-name">
+            {{ game.name }}
+          </span>
+
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================= -->
+    <!-- PANEL DE ESTADÍSTICAS D3.JS -->
+    <!-- ================================= -->
+    <section *ngIf="!selectedGame && mostrarEstadisticas" class="xbox-stats-section">
+      <div class="xbox-stats-heading">
+        <h2>Estadísticas de Xbox</h2>
+        <button type="button" class="xbox-gallery-toggle" (click)="cargarEstadisticas()"
+                [disabled]="cargandoEstadisticas">Actualizar datos</button>
+      </div>
+      <p *ngIf="cargandoEstadisticas" role="status">Consultando los logros de Xbox...</p>
+      <p *ngIf="errorEstadisticas" class="xbox-stats-error" role="alert">{{ errorEstadisticas }} Los filtros siguen disponibles para consultar datos locales.</p>
+      <p *ngIf="avisoEstadisticas" class="xbox-stats-notice">{{ avisoEstadisticas }}</p>
+      <!-- Los filtros permanecen visibles incluso si la API tarda o falla. -->
+        <div class="xbox-stats-filters" aria-label="Filtros de estadísticas">
+          <div class="xbox-stats-filter">
+            <label for="anio-logros">Año</label>
+            <select style="display:block !important; width:100% !important; height:44px !important; min-height:44px !important; padding:9px 32px 9px 12px !important; background-color:#292929 !important; color:#ffffff !important; border:1px solid #6d6d6d !important; border-radius:8px !important; opacity:1 !important; visibility:visible !important; font-size:14px !important; appearance:auto !important; -webkit-appearance:menulist !important;" id="anio-logros" [value]="anioEstadisticas" (change)="seleccionarAnioEstadisticas($event)">
+              <option *ngIf="!aniosDisponibles.length" [value]="anioEstadisticas">{{ anioEstadisticas }}</option>
+              <option *ngFor="let anio of aniosDisponibles" [value]="anio">{{ anio }}</option>
+            </select>
+          </div>
+          <div class="xbox-stats-filter">
+            <label for="trimestre-logros">Trimestre</label>
+            <select style="display:block !important; width:100% !important; height:44px !important; min-height:44px !important; padding:9px 32px 9px 12px !important; background-color:#292929 !important; color:#ffffff !important; border:1px solid #6d6d6d !important; border-radius:8px !important; opacity:1 !important; visibility:visible !important; font-size:14px !important; appearance:auto !important; -webkit-appearance:menulist !important;" id="trimestre-logros" [value]="trimestreEstadisticas" (change)="cambiarFiltroEstadisticas($event, 'trimestre')">
+              <option [value]="0">Todo el año</option>
+              <option [value]="1">Enero – marzo</option>
+              <option [value]="2">Abril – junio</option>
+              <option [value]="3">Julio – septiembre</option>
+              <option [value]="4">Octubre – diciembre</option>
+            </select>
+          </div>
+          <div class="xbox-stats-filter">
+            <label for="metrica-juegos">Comparar por</label>
+            <select style="display:block !important; width:100% !important; height:44px !important; min-height:44px !important; padding:9px 32px 9px 12px !important; background-color:#292929 !important; color:#ffffff !important; border:1px solid #6d6d6d !important; border-radius:8px !important; opacity:1 !important; visibility:visible !important; font-size:14px !important; appearance:auto !important; -webkit-appearance:menulist !important;" id="metrica-juegos" [value]="metricaJuegosEstadisticas" (change)="cambiarFiltroEstadisticas($event, 'metrica')">
+              <option value="logros">Logros desbloqueados</option>
+              <option value="gamerscore">Gamerscore obtenido</option>
+            </select>
+          </div>
+          <div class="xbox-stats-filter">
+            <label for="limite-juegos">Mostrar juegos</label>
+            <select style="display:block !important; width:100% !important; height:44px !important; min-height:44px !important; padding:9px 32px 9px 12px !important; background-color:#292929 !important; color:#ffffff !important; border:1px solid #6d6d6d !important; border-radius:8px !important; opacity:1 !important; visibility:visible !important; font-size:14px !important; appearance:auto !important; -webkit-appearance:menulist !important;" id="limite-juegos" [value]="limiteJuegosEstadisticas" (change)="cambiarFiltroEstadisticas($event, 'limite')">
+              <option [value]="5">5 juegos</option>
+              <option [value]="8">8 juegos</option>
+              <option [value]="12">12 juegos</option>
+              <option [value]="20">20 juegos</option>
+            </select>
+          </div>
+          <div class="xbox-stats-filter">
+            <label for="juego-estadisticas">Videojuego</label>
+            <select style="display:block !important; width:100% !important; height:44px !important; min-height:44px !important; padding:9px 32px 9px 12px !important; background-color:#292929 !important; color:#ffffff !important; border:1px solid #6d6d6d !important; border-radius:8px !important; opacity:1 !important; visibility:visible !important; font-size:14px !important; appearance:auto !important; -webkit-appearance:menulist !important;" id="juego-estadisticas" [value]="filtroJuegoEstadisticas" (change)="cambiarFiltroEstadisticas($event, 'juego')">
+              <option value="">Todos los juegos</option>
+              <option *ngFor="let juego of juegosFiltrablesEstadisticas" [value]="juego.titleId ?? juego.name">{{ juego.name }}</option>
+            </select>
+          </div>
+          <button type="button" class="xbox-stats-reset" (click)="restablecerFiltrosEstadisticas()">Restablecer filtros</button>
+        </div>
+        <div class="xbox-stats-summary">
+          <div><strong>{{ totalLogrosAnio }}</strong><span>Logros en el período seleccionado</span></div>
+          <div><strong>{{ mesMasActivo }}</strong><span>Mes más activo</span></div>
+        </div>
+        <h3>Logros desbloqueados por mes</h3>
+        <div #graficaMensual class="xbox-stats-chart"></div>
+        <p class="xbox-stats-caption">Se usan únicamente los logros recibidos con fecha de desbloqueo válida.</p>
+        <h3>{{ metricaJuegosEstadisticas === 'gamerscore' ? 'Gamerscore por videojuego' : 'Juegos con más logros' }}</h3>
+        <div #graficaJuegos class="xbox-stats-chart"></div>
+        <p class="xbox-stats-caption">Comparación basada en los totales actuales de Mis juegos; el filtro de año/trimestre solo se aplica a la gráfica mensual.</p>
+    </section>
+
+    <!-- ================================= -->
+    <!-- VISOR MULTIMEDIA -->
+    <!-- ================================= -->
+
+    <div
+      *ngIf="juegoEnVisor as juego"
+      class="xbox-gallery-backdrop"
+      (click)="cerrarVisor()"
+      role="presentation"
+    >
+
+      <div
+        class="xbox-gallery-viewer"
+        role="dialog"
+        aria-modal="true"
+        [attr.aria-label]="'Portada ampliada de ' + juego.name"
+        (click)="$event.stopPropagation()"
+      >
+
+        <!-- BOTÓN CERRAR -->
+
+        <button
+          type="button"
+          class="xbox-gallery-close"
+          (click)="cerrarVisor()"
+          aria-label="Cerrar visor"
+        >
+          ×
+        </button>
+
+        <!-- PORTADA AMPLIADA -->
+
+        <div class="xbox-gallery-large-cover">
+
+          <img
+            *ngIf="juego.image"
+            [src]="juego.image"
+            [alt]="'Portada ampliada de ' + juego.name"
+          />
+
+          <span
+            *ngIf="!juego.image"
+            class="xbox-gallery-placeholder"
+            aria-hidden="true"
+          >
+            🎮
+          </span>
+
+        </div>
+
+        <!-- INFORMACIÓN -->
+
+        <h3>
+          {{ juego.name }}
+        </h3>
+
+        <p>
+          {{ juego.platform || 'Xbox' }}
+        </p>
+
+        <!-- NAVEGACIÓN -->
+
+        <div class="xbox-gallery-controls">
+
+          <button
+            type="button"
+            (click)="cambiarPortada(-1)"
+            aria-label="Portada anterior"
+          >
+            ← Anterior
+          </button>
+
+          <span>
+            {{ indicePortada + 1 }} / {{ games.length }}
+          </span>
+
+          <button
+            type="button"
+            (click)="cambiarPortada(1)"
+            aria-label="Portada siguiente"
+          >
+            Siguiente →
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
 
     <!-- ================================= -->
     <!-- LISTA DE JUEGOS -->
@@ -199,15 +446,9 @@
         Mis juegos
       </h2>
 
-
-      <p
-        style="
-          opacity: 0.7;
-        "
-      >
+      <p style="opacity: 0.7;">
         {{ games.length }} juegos encontrados
       </p>
-
 
       <!-- =============================== -->
       <!-- JUEGO -->
@@ -260,18 +501,14 @@
             "
           >
 
-
           <span
             *ngIf="!game.image"
-            style="
-              font-size: 35px;
-            "
+            style="font-size: 35px;"
           >
             🎮
           </span>
 
         </div>
-
 
         <!-- =============================== -->
         <!-- INFORMACIÓN -->
@@ -293,7 +530,6 @@
             {{ game.name }}
           </h3>
 
-
           <p
             style="
               margin: 5px 0;
@@ -304,19 +540,13 @@
             {{ game.platform }}
           </p>
 
-
-          <p
-            style="
-              margin: 5px 0;
-            "
-          >
+          <p style="margin: 5px 0;">
             🏆
             {{ game.currentGamerscore || 0 }}
             /
             {{ game.maxGamerscore || 0 }}
             Gamerscore
           </p>
-
 
           <p
             style="
@@ -330,7 +560,6 @@
           </p>
 
         </div>
-
 
         <!-- =============================== -->
         <!-- FLECHA -->
@@ -347,7 +576,6 @@
 
       </div>
 
-
       <!-- SIN JUEGOS -->
 
       <div
@@ -360,23 +588,18 @@
           padding: 30px;
         "
       >
-
         <p>
           No se encontraron juegos.
         </p>
-
       </div>
 
     </div>
-
 
     <!-- ================================= -->
     <!-- JUEGO SELECCIONADO -->
     <!-- ================================= -->
 
-    <div
-      *ngIf="selectedGame"
-    >
+    <div *ngIf="selectedGame">
 
       <!-- BOTÓN REGRESAR -->
 
@@ -394,7 +617,6 @@
       >
         ← Mis juegos
       </button>
-
 
       <!-- ================================= -->
       <!-- INFORMACIÓN DEL JUEGO -->
@@ -433,7 +655,6 @@
             "
           >
 
-
           <div
             *ngIf="!selectedGame.image"
             style="
@@ -450,23 +671,13 @@
 
         </div>
 
-
         <!-- DATOS -->
 
-        <div
-          style="
-            padding: 20px;
-          "
-        >
+        <div style="padding: 20px;">
 
-          <h2
-            style="
-              margin-top: 0;
-            "
-          >
+          <h2 style="margin-top: 0;">
             {{ selectedGame.name }}
           </h2>
-
 
           <p>
             Plataforma:
@@ -474,7 +685,6 @@
               {{ selectedGame.platform }}
             </strong>
           </p>
-
 
           <p>
             Gamerscore:
@@ -485,14 +695,12 @@
             </strong>
           </p>
 
-
           <p>
             Logros obtenidos:
             <strong>
               {{ selectedGame.earnedAchievements || 0 }}
             </strong>
           </p>
-
 
           <!-- BOTÓN LOGROS -->
 
@@ -517,7 +725,6 @@
 
       </div>
 
-
       <!-- ================================= -->
       <!-- CARGANDO LOGROS -->
       <!-- ================================= -->
@@ -529,13 +736,10 @@
           padding: 30px;
         "
       >
-
         <p>
           🏆 Cargando logros...
         </p>
-
       </div>
-
 
       <!-- ================================= -->
       <!-- LISTA DE LOGROS -->
@@ -552,16 +756,10 @@
           Logros
         </h2>
 
-
-        <p
-          style="
-            opacity: 0.7;
-          "
-        >
+        <p style="opacity: 0.7;">
           {{ achievements.length }}
           logros encontrados
         </p>
-
 
         <!-- LOGRO -->
 
@@ -607,7 +805,6 @@
               ✓
             </span>
 
-
             <span
               *ngIf="
                 achievement.progressState !==
@@ -619,14 +816,9 @@
 
           </div>
 
-
           <!-- INFORMACIÓN -->
 
-          <div
-            style="
-              flex: 1;
-            "
-          >
+          <div style="flex: 1;">
 
             <h3
               style="
@@ -637,7 +829,6 @@
               {{ achievement.name }}
             </h3>
 
-
             <p
               style="
                 margin: 0;
@@ -647,7 +838,6 @@
             >
               {{ achievement.description }}
             </p>
-
 
             <p
               style="
@@ -661,22 +851,17 @@
                   achievement.progressState ===
                   'Achieved'
                 "
-                style="
-                  color: #70d670;
-                "
+                style="color: #70d670;"
               >
                 ✓ Desbloqueado
               </span>
-
 
               <span
                 *ngIf="
                   achievement.progressState !==
                   'Achieved'
                 "
-                style="
-                  color: #aaa;
-                "
+                style="color: #aaa;"
               >
                 🔒 Bloqueado
               </span>
@@ -684,7 +869,6 @@
             </p>
 
           </div>
-
 
           <!-- GAMERSCORE DEL LOGRO -->
 
@@ -695,14 +879,9 @@
             "
           >
 
-            <strong
-              style="
-                font-size: 14px;
-              "
-            >
+            <strong style="font-size: 14px;">
               {{ achievement.rewards?.[0]?.value || 0 }}
             </strong>
-
 
             <div
               style="
@@ -717,23 +896,18 @@
 
         </div>
 
-
         <!-- SIN LOGROS -->
 
         <div
-          *ngIf="
-            achievements.length === 0
-          "
+          *ngIf="achievements.length === 0"
           style="
             text-align: center;
             padding: 30px;
           "
         >
-
           <p>
             Este juego no tiene logros disponibles.
           </p>
-
         </div>
 
       </div>
@@ -743,4 +917,3 @@
   </div>
 
 </ion-content>
-
